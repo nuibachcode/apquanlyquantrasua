@@ -34,12 +34,12 @@ public class BillRepositoryImpl implements IBillRepository {
                     for (Object item : list) {
                         bills.add((Bill) item);
                     }
-                    System.out.println("Danh sách hóa đơn đã được đọc từ file thành công.");
+                    System.out.println("danh sach hoa don da duoc doc tu file thanh cong.");
                 } else {
-                    throw new IOException("Dữ liệu trong file không phải là List<Bill>");
+                    throw new IOException("du lieu trong file khong phai List<Bill>");
                 }
             } else {
-                throw new IOException("Dữ liệu trong file không phải là List<?>");
+                throw new IOException("du lieu trong file khong phai la List<?>");
             }
         } catch (FileNotFoundException e) {
             System.out.println("Chưa Có Hóa Đơn Nào");

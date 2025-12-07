@@ -25,7 +25,7 @@ public class UserRepositoryImpl implements IUserRepository {
         try (OutputStream fos = new FileOutputStream(file);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(users);
-            System.out.println("Danh sách User đã được ghi vào file thành công.");
+            System.out.println("Danh danh sach user duoc ghi vao file thanh cong.");
         } catch (IOException e) {
             System.err.println("Lỗi khi ghi file: " + e.getMessage());
             e.printStackTrace();
@@ -51,7 +51,7 @@ public class UserRepositoryImpl implements IUserRepository {
                     for (Object item : list) {
                         users.add((User) item);
                     }
-                    System.out.println("Danh sách User đã được đọc từ file thành công.");
+                    System.out.println("Danh sach user duoc ghi vào file thanh cong.");
                 } else {
                     throw new IOException("Dữ liệu trong file không phải là List<User>");
                 }
@@ -66,8 +66,8 @@ public class UserRepositoryImpl implements IUserRepository {
 
     private void initializeUsers() {
     	 // Tạo tài khoản quản trị viên
-        users.add(new User(1, "Nguyễn Lê Hoài Nam", "nam@gmail.com", "0966618229", "Address1", "123", "ADMIN"));
-        users.add(new User(2, "Bạch Sỹ Núi", "n@gmail.com", "0819617768", "Address1", "123", "ADMIN"));
+        users.add(new User(1, "Nguyễn Thị Tuyết Nhung", "nhung@gmail.com", "0987654321", "Address1", "nhungxinhgai", "ADMIN"));
+        users.add(new User(2, "Bạch Sỹ Núi", "n@gmail.com", "0819617768", "Address1", "123", "USER"));
 
         // Tạo tài khoản người dùng với vai trò "USER"
         users.add(new User(4, "Nguyễn Văn A", "nguyenvana@gmail.com", "987654321", "Address4", "123", "USER"));
@@ -98,7 +98,17 @@ public class UserRepositoryImpl implements IUserRepository {
         }
         return null;
     }
-
+    public User findByEmailAndPhoneNumber(String email, String phoneNumber) {
+    // Giả định 'users' là List<User> chứa dữ liệu người dùng
+    
+    // **SỬA LỖI:** Đảm bảo vòng lặp tìm kiếm so sánh với getSdt()
+    for (User user : users) { 
+        if (user.getEmail().equalsIgnoreCase(email) && user.getSdt().equals(phoneNumber)) {
+            return user;
+        }
+    }
+    return null;
+}
     @Override
     public User findByEmail(String email) {
         for (User user : users) {

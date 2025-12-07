@@ -51,7 +51,7 @@ public class LoginController implements ActionListener {
         if (user != null) {
             JOptionPane.showMessageDialog(loginView, "Đăng Nhập Thành Công!", "Success", JOptionPane.INFORMATION_MESSAGE);
             if (user.getRole().equals("ADMIN")) {
-                new AdminView().setVisible(true);
+                new AdminView(user).setVisible(true);
             } else {
                 new ProductView(user).setVisible(true);
             }

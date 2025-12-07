@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import model.User;
 import view.ForgotPasswordView;
-import repository.UserRepositoryImpl; // Đảm bảo import đúng
+import repository.UserRepositoryImpl; 
 
 public class ForgotPasswordController implements ActionListener {
 
@@ -38,23 +38,23 @@ public class ForgotPasswordController implements ActionListener {
         }
 
         try {
-            // Sử dụng phương thức tối ưu để tìm kiếm User theo cả Email và SĐT
-            // *Bạn cần đảm bảo phương thức này tồn tại trong UserRepositoryImpl*
-            User userFound = userRepository.findByEmailAndPassword(email, phoneNumberStr);
+            // *** ĐÃ SỬA: GỌI ĐÚNG PHƯƠNG THỨC TÌM KIẾM THEO EMAIL VÀ SĐT ***
+            User userFound = userRepository.findByEmailAndPhoneNumber(email, phoneNumberStr);
 
             if (userFound != null) {
                 // Hiển thị MẬT KHẨU
                 String message = String.format(
                     "Tìm Thấy Người Dùng: %s\nEmail: %s\nMật Khẩu Của Bạn Là: %s", 
                     userFound.getTen(), userFound.getEmail(), userFound.getMatKhau());
-                    
+                        
                 JOptionPane.showMessageDialog(forgotPasswordView, 
                                               message, 
                                               "Tìm Thấy Người Dùng", 
                                               JOptionPane.INFORMATION_MESSAGE);
             } else {
+                // Thông báo lỗi nếu không tìm thấy User khớp cả Email và SĐT
                 JOptionPane.showMessageDialog(forgotPasswordView, 
-                                              "Không tìm thấy người dùng. Vui lòng kiểm tra lại Email hoặc Số Điện Thoại.", 
+                                              "Không tìm thấy người dùng. Vui lòng kiểm tra lại Email và Số Điện Thoại.", 
                                               "Lỗi", 
                                               JOptionPane.ERROR_MESSAGE);
             }

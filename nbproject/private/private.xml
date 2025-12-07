@@ -10,13 +10,17 @@
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/SignUpView.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/model/Product.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/AdminView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/bill/BillManagementController.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/test/TestSignUp.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/main/Main.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/ForgotPasswordView.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/BillView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/analytics/AnalyticsController.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/test/TestLogin.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/ForgotPasswordView.jpg</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/panels/BillManagementPanel.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/SignUpView.jpg</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/panels/AccountManagementPanel.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/test/TestAdminView.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/ProductView.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/test/TestForgotPasswordView.java</file>
@@ -24,10 +28,15 @@
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/ForgotPasswordController.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/ProductController.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/BackgroundPanel.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/product/ProductManagementController.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/repository/BillRepositoryImpl.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/model/SelectedProduct.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/panels/ProductManagementPanel.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/LoginIcon.jpg</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/LoginView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/user/UserManagementController.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/panels/AnalyticsPanel.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/SignUpController.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/AdminController.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/model/User.java</file>
             <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/banner.jpg</file>
