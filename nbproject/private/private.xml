@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/repository/ProductRepositoryImpl.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/BillView.jpg</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/repository/IRepository/IUserRepository.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/repository/UserRepositoryImpl.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/SignUpView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/model/Product.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/AdminView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/test/TestSignUp.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/main/Main.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/ForgotPasswordView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/BillView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/test/TestLogin.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/ForgotPasswordView.jpg</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/SignUpView.jpg</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/test/TestAdminView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/ProductView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/test/TestForgotPasswordView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/model/Bill.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/ForgotPasswordController.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/ProductController.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/BackgroundPanel.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/repository/BillRepositoryImpl.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/model/SelectedProduct.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/LoginIcon.jpg</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/view/LoginView.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/AdminController.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/model/User.java</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/images/banner.jpg</file>
+            <file>file:/D:/Laptrinhjava/quanlyquantrasua/src/controller/LoginController.java</file>
+        </group>
+    </open-files>
+</project-private>
