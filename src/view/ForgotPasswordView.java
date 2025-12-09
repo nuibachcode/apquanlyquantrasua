@@ -1,124 +1,120 @@
 package view;
 
+import controller.ForgotPasswordController;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import controller.ForgotPasswordController;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-// Lưu ý: Giả định bạn đã có file BackgroundPanel.java trong package view
-// và nó chứa logic vẽ ảnh nền: g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
 
 public class ForgotPasswordView extends JFrame {
 
-    private static final long serialVersionUID = 1L;
     private JPanel contentPane;
-    private JTextField textFieldEmail; 
-    private JTextField textFieldPhoneNumber; 
+    private JTextField txtEmail, txtOTP;
+    private JPasswordField txtNewPass, txtConfirmPass;
+    private JButton btnSendCode, btnConfirmReset, btnBack;
     
-    // Loại bỏ JLabel backgroundLabel vì ta sẽ dùng BackgroundPanel
+    // Các panel chứa form để ẩn/hiện
+    public JPanel pnlVerify, pnlReset; 
 
-    // Các hằng số vị trí
-    private final int INPUT_WIDTH = 300;
-    private final int INPUT_HEIGHT = 30;
-    private final int START_Y = 200;
-    private final int LABEL_X = 450;
-    private final int FIELD_X = 580;
-    
     public ForgotPasswordView() {
         setTitle("Quên Mật Khẩu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100,1000, 650); 
+        setBounds(100, 100, 800, 500);
         setLocationRelativeTo(null);
         setResizable(false);
-        
-        // --- Tải ảnh gốc (KHÔNG resize ở đây) ---
-        Image bgImage = null;
-        try {
-            // Tên ảnh trong code gốc của bạn là signUpView.jpg, tôi giữ nguyên theo bạn gửi
-            // Nếu bạn muốn dùng ảnh riêng cho ForgotPassword, hãy đảm bảo đường dẫn đúng
-            bgImage = new ImageIcon(getClass().getResource("/images/signUpView.jpg")).getImage(); 
-        } catch (Exception e) {
-             System.err.println("Warning: Background image not found.");
-        }
-        
-        // ***************************************************************
-        // *** TỐI ƯU: Chỉ truyền ảnh GỐC vào BackgroundPanel để load nhanh ***
-        // ***************************************************************
-        contentPane = new BackgroundPanel(bgImage); 
+
+        // Background
+        Image bgImage = new ImageIcon(getClass().getResource("/images/signUpView.jpg")).getImage();
+        contentPane = new BackgroundPanel(bgImage);
         contentPane.setLayout(null);
         setContentPane(contentPane);
-        
-        // ===== Tiêu đề =====
-        JLabel lblTitle = new JLabel("QUÊN MẬT KHẨU");
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 40)); 
-        lblTitle.setForeground(new Color(0, 0, 153)); 
-        lblTitle.setBounds(550, 70, 350, 50); 
+
+        // Title
+        JLabel lblTitle = new JLabel("ĐẶT LẠI MẬT KHẨU");
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 30));
+        lblTitle.setForeground(new Color(0, 0, 153));
+        lblTitle.setBounds(250, 30, 400, 40);
         contentPane.add(lblTitle);
 
-        // ===== Email =====
-        JLabel lbl_email = new JLabel("Email:"); 
-        lbl_email.setFont(new Font("Arial", Font.BOLD, 20)); 
-        lbl_email.setBounds(LABEL_X, START_Y, 120, INPUT_HEIGHT);
-        contentPane.add(lbl_email);
+        // --- BƯỚC 1: NHẬP EMAIL ---
+        JLabel lblEmail = new JLabel("Nhập Email đăng ký:");
+        lblEmail.setFont(new Font("Arial", Font.BOLD, 16));
+        lblEmail.setBounds(150, 100, 200, 30);
+        contentPane.add(lblEmail);
 
-        textFieldEmail = new JTextField();
-        textFieldEmail.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        textFieldEmail.setBounds(FIELD_X, START_Y, INPUT_WIDTH, INPUT_HEIGHT);
-        contentPane.add(textFieldEmail);
+        txtEmail = new JTextField();
+        txtEmail.setBounds(350, 100, 250, 30);
+        contentPane.add(txtEmail);
 
-        // ===== Số Điện Thoại =====
-        JLabel lbl_phonenumber = new JLabel("SĐT:"); 
-        lbl_phonenumber.setFont(new Font("Arial", Font.BOLD, 20)); 
-        lbl_phonenumber.setBounds(LABEL_X, START_Y + 50, 150, INPUT_HEIGHT);
-        contentPane.add(lbl_phonenumber);
+        btnSendCode = new JButton("Gửi mã xác nhận");
+        btnSendCode.setBounds(620, 100, 140, 30);
+        btnSendCode.setBackground(Color.ORANGE);
+        contentPane.add(btnSendCode);
 
-        textFieldPhoneNumber = new JTextField();
-        textFieldPhoneNumber.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        textFieldPhoneNumber.setBounds(FIELD_X, START_Y + 50, INPUT_WIDTH, INPUT_HEIGHT);
-        contentPane.add(textFieldPhoneNumber);
+        // --- BƯỚC 2: NHẬP OTP & MẬT KHẨU MỚI (Mặc định ẩn hoặc Disable) ---
+        pnlReset = new JPanel();
+        pnlReset.setLayout(null);
+        pnlReset.setOpaque(false); // Để nhìn thấy ảnh nền
+        pnlReset.setBounds(100, 150, 600, 250);
+        pnlReset.setVisible(false); // Ẩn đi lúc đầu
+        contentPane.add(pnlReset);
 
-        // ===== Nút "Lấy lại mật khẩu" (Find) =====
-        JButton btnFind = new JButton("Lấy lại mật khẩu"); 
-        btnFind.setBounds(500, START_Y + 130, 200, 40);
-        btnFind.setBackground(Color.CYAN);
-        btnFind.setFont(new Font("Arial", Font.BOLD, 18));
-        btnFind.setActionCommand("Find"); 
-        contentPane.add(btnFind);
+        // Mã OTP
+        JLabel lblOTP = new JLabel("Mã xác nhận (OTP):");
+        lblOTP.setFont(new Font("Arial", Font.BOLD, 14));
+        lblOTP.setBounds(50, 10, 150, 30);
+        pnlReset.add(lblOTP);
 
-        // ===== Nút "Quay lại đăng nhập" =====
-        JButton btnBackToLogin = new JButton("Quay lại đăng nhập");
-        btnBackToLogin.setBounds(720, START_Y + 130, 230, 40);
-        btnBackToLogin.setBackground(Color.CYAN);
-        btnBackToLogin.setFont(new Font("Arial ", Font.BOLD, 18));
+        txtOTP = new JTextField();
+        txtOTP.setBounds(250, 10, 150, 30);
+        pnlReset.add(txtOTP);
+
+        // Mật khẩu mới
+        JLabel lblNewPass = new JLabel("Mật khẩu mới:");
+        lblNewPass.setFont(new Font("Arial", Font.BOLD, 14));
+        lblNewPass.setBounds(50, 60, 150, 30);
+        pnlReset.add(lblNewPass);
+
+        txtNewPass = new JPasswordField();
+        txtNewPass.setBounds(250, 60, 250, 30);
+        pnlReset.add(txtNewPass);
         
-        btnBackToLogin.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new LoginView().setVisible(true); 
-                dispose();
-            }
-        });
-        contentPane.add(btnBackToLogin);
+        // Nhập lại mật khẩu
+        JLabel lblConfirm = new JLabel("Nhập lại mật khẩu:");
+        lblConfirm.setFont(new Font("Arial", Font.BOLD, 14));
+        lblConfirm.setBounds(50, 110, 150, 30);
+        pnlReset.add(lblConfirm);
 
-        // ===== Gán Controller =====
+        txtConfirmPass = new JPasswordField();
+        txtConfirmPass.setBounds(250, 110, 250, 30);
+        pnlReset.add(txtConfirmPass);
+
+        // Nút Xác nhận đổi
+        btnConfirmReset = new JButton("Xác nhận đổi mật khẩu");
+        btnConfirmReset.setBackground(Color.GREEN);
+        btnConfirmReset.setFont(new Font("Arial", Font.BOLD, 16));
+        btnConfirmReset.setBounds(180, 170, 250, 40);
+        pnlReset.add(btnConfirmReset);
+
+        // Nút quay lại
+        btnBack = new JButton("Quay lại đăng nhập");
+        btnBack.setBounds(300, 400, 200, 30);
+        btnBack.addActionListener(e -> {
+            new LoginView().setVisible(true);
+            dispose();
+        });
+        contentPane.add(btnBack);
+
+        // Gắn Controller
         ForgotPasswordController controller = new ForgotPasswordController(this);
-        btnFind.addActionListener(controller);
-        
-        this.setVisible(true);
-    }
-    
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                new ForgotPasswordView();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        btnSendCode.addActionListener(controller);
+        btnConfirmReset.addActionListener(controller);
     }
 
     // Getters
-    public JTextField getTextFieldEmail() { return textFieldEmail; }
-    public JTextField getTextFieldPhoneNumber() { return textFieldPhoneNumber; }
+    public JTextField getTxtEmail() { return txtEmail; }
+    public JTextField getTxtOTP() { return txtOTP; }
+    public JPasswordField getTxtNewPass() { return txtNewPass; }
+    public JPasswordField getTxtConfirmPass() { return txtConfirmPass; }
+    public JButton getBtnSendCode() { return btnSendCode; }
+    public JButton getBtnConfirmReset() { return btnConfirmReset; }
+    public JPanel getPnlReset() { return pnlReset; }
 }
