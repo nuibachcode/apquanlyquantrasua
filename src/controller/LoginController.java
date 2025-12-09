@@ -6,10 +6,10 @@ import javax.swing.JOptionPane;
 
 import model.User;
 import repository.UserRepositoryImpl;
-import view.AdminView;
+import view.AdminView.AdminView;
 import view.ForgotPasswordView;
 import view.LoginView;
-import view.ProductView;
+import view.UserView.ProductView;
 import view.SignUpView;
 
 public class LoginController implements ActionListener {
@@ -35,8 +35,8 @@ public class LoginController implements ActionListener {
                 loginView.dispose();
                 break;
             case "SignUp":
-                new SignUpView().setVisible(true); // mở form đăng ký
-                loginView.dispose(); // nếu muốn đóng login view
+                new SignUpView().setVisible(true); 
+                loginView.dispose(); 
                 break;
             default:
                 break;

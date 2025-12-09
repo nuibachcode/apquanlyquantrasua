@@ -2,7 +2,7 @@ package test;
 
 import javax.swing.UIManager;
 
-import view.AdminView;
+import view.AdminView.AdminView;
 
 public class TestAdminView {
 	public static void main(String[] args) {
