@@ -2,6 +2,8 @@ package repository;
 
 import model.User;
 import repository.IRepository.IUserRepository;
+import utils.SecurityUtils; // Import tiện ích bảo mật
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,22 +14,23 @@ public class UserRepositoryImpl implements IUserRepository {
     
     public UserRepositoryImpl() {
         loadUsersFromFile();
+        // Nếu file rỗng thì tạo mẫu (thường Seeder đã làm việc này rồi)
         if (users.isEmpty()) {
-            initializeUsers();
-            saveUsersToFile();
+            // initializeUsers(); 
+            // saveUsersToFile();
         }
     }
 
-    // --- CÁC HÀM FILE I/O (GIỮ NGUYÊN) ---
+    // --- FILE I/O ---
     private void saveUsersToFile() {
-        File file = new File(FILE_PATH);
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
             oos.writeObject(users);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void loadUsersFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists()) return;
@@ -43,16 +46,7 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
-    private void initializeUsers() {
-        // Tạo dữ liệu mẫu
-        users.add(new User(1, "Nguyễn Thị Tuyết Nhung", "nhung@gmail.com", "0987654321", "HN", "admin123", "ADMIN"));
-        users.add(new User(2, "Bạch Sỹ Núi", "n@gmail.com", "0819617768", "HN", "123", "ADMIN"));
-        users.add(new User(4, "Nguyễn Văn A", "user@gmail.com", "0900000000", "HN", "123", "USER"));
-        // ... (Bạn có thể thêm user mẫu khác tùy ý)
-    }
-
-    // --- CÁC HÀM CRUD CƠ BẢN ---
-
+    // --- CRUD ---
     @Override
     public User save(User user) {
         int newId = generateNewId();  
@@ -65,7 +59,7 @@ public class UserRepositoryImpl implements IUserRepository {
     @Override
     public User update(User user) {
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getMaNV() == user.getMaNV()) { // Nên so sánh theo ID (MaNV) chuẩn hơn Email
+            if (users.get(i).getMaNV() == user.getMaNV()) {
                 users.set(i, user);
                 saveUsersToFile();
                 return user;
@@ -76,7 +70,6 @@ public class UserRepositoryImpl implements IUserRepository {
 
     @Override
     public void delete(User user) {
-        // Xóa user dựa trên ID để chính xác nhất
         users.removeIf(u -> u.getMaNV() == user.getMaNV());
         saveUsersToFile();
     }
@@ -88,24 +81,20 @@ public class UserRepositoryImpl implements IUserRepository {
 
     @Override
     public User findById(int id) {
-        for (User user : users) {
-            if (user.getMaNV() == id) {
-                return user;
-            }
-        }
-        return null;
+        return users.stream().filter(u -> u.getMaNV() == id).findFirst().orElse(null);
     }
-
+    
     @Override
     public void clear() {
         users.clear();
         saveUsersToFile();
     }
 
-    // --- CÁC HÀM NGHIỆP VỤ (LOGIN, FORGOT PASSWORD) ---
+    // --- LOGIC ĐĂNG NHẬP & BẢO MẬT ---
 
     @Override
     public User findByEmailAndPassword(String email, String password) {
+        // Lưu ý: password truyền vào ở đây phải là chuỗi ĐÃ MÃ HÓA từ Controller
         for (User user : users) {
             if (user.getEmail().equals(email) && user.getMatKhau().equals(password)) {
                 return user;
@@ -124,29 +113,24 @@ public class UserRepositoryImpl implements IUserRepository {
         return null;
     }
 
-    // [MỚI] Hàm hỗ trợ chức năng Quên mật khẩu: Kiểm tra email có tồn tại không
+    // [MỚI] Kiểm tra email tồn tại (cho ForgotPasswordController)
     public boolean checkEmailExists(String email) {
-        for (User user : users) {
-            if (user.getEmail().equalsIgnoreCase(email)) {
-                return true;
-            }
-        }
-        return false;
+        return findByEmail(email) != null;
     }
 
-    // [MỚI] Hàm hỗ trợ chức năng Quên mật khẩu: Cập nhật mật khẩu mới theo Email
-    public void updatePassword(String email, String newPassword) {
+    // [MỚI] Cập nhật mật khẩu mới (Tự động mã hóa trước khi lưu)
+    public void updatePassword(String email, String newRawPassword) {
         for (User user : users) {
             if (user.getEmail().equalsIgnoreCase(email)) {
-                user.setMatKhau(newPassword);
-                saveUsersToFile(); // Lưu ngay lập tức xuống file
-                System.out.println("Đã cập nhật mật khẩu cho user: " + email);
+                // Mã hóa
+                String hashedPassword = SecurityUtils.hashPassword(newRawPassword);
+                user.setMatKhau(hashedPassword);
+                saveUsersToFile();
                 return;
             }
         }
     }
 
-    // Helper: Tạo ID tự động tăng
     private int generateNewId() {
         int maxId = users.stream().mapToInt(User::getMaNV).max().orElse(0);
         return maxId + 1;

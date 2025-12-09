@@ -6,15 +6,14 @@ import javax.swing.JOptionPane;
 
 import model.User;
 import repository.UserRepositoryImpl;
-import view.AdminView.AdminView;
-import view.ForgotPasswordView;
+import utils.SecurityUtils;
+import view.AdminView.AdminView; // Đảm bảo đúng package của bạn
 import view.LoginView;
-import view.UserView.UserView;
 import view.SignUpView;
+import view.ForgotPasswordView; // View Quên mật khẩu xịn của bạn
+import view.UserView.UserView;  // <--- IMPORT MỚI
+import controller.UserController.UserController; // <--- IMPORT MỚI
 
-// [QUAN TRỌNG 1] Thêm dòng import này
-import controller.UserController.UserController; 
-// Nếu có AdminController thì import luôn: import controller.AdminController.AdminController;
 public class LoginController implements ActionListener {
 
     private LoginView loginView;
@@ -33,14 +32,18 @@ public class LoginController implements ActionListener {
             case "Login":
                 handleLogin();
                 break;
+                
             case "Forget Password ?":
+                // Mở màn hình Quên Mật Khẩu riêng (ForgotPasswordView)
                 new ForgotPasswordView().setVisible(true);
                 loginView.dispose();
                 break;
+                
             case "SignUp":
-                new SignUpView().setVisible(true); 
-                loginView.dispose(); 
+                new SignUpView().setVisible(true);
+                loginView.dispose();
                 break;
+                
             default:
                 break;
         }
@@ -48,30 +51,25 @@ public class LoginController implements ActionListener {
 
     private void handleLogin() {
         String email = loginView.getTextFieldEmail().getText();
-        String password = new String(loginView.getPasswordField().getPassword());
+        String rawPassword = new String(loginView.getPasswordField().getPassword());
 
-        User user = userRepository.findByEmailAndPassword(email, password);
-        
+        // 1. Mã hóa mật khẩu người dùng vừa nhập
+        String hashedPassword = SecurityUtils.hashPassword(rawPassword);
+
+        // 2. Tìm kiếm trong CSDL (so sánh chuỗi mã hóa)
+        User user = userRepository.findByEmailAndPassword(email, hashedPassword);
+
         if (user != null) {
             JOptionPane.showMessageDialog(loginView, "Đăng Nhập Thành Công!", "Success", JOptionPane.INFORMATION_MESSAGE);
             
-            if (user.getRole().equals("ADMIN")) {
-                // Nếu bên Admin cũng bị trắng, bạn cần sửa tương tự như dưới:
-                // AdminView adminView = new AdminView(user);
-                // new AdminController(adminView);
-                // adminView.setVisible(true);
-                new AdminView(user).setVisible(true); 
-                
+            if ("ADMIN".equals(user.getRole())) {
+                // Chuyển sang màn hình Admin
+                new AdminView(user).setVisible(true);
             } else {
-                // [QUAN TRỌNG 2] SỬA ĐOẠN NÀY
-                // 1. Tạo View
-                UserView productView = new UserView(user);
-                
-                // 2. KẾT NỐI CONTROLLER (Đây là bước nạp dữ liệu)
-                new UserController(productView); 
-                
-                // 3. Hiển thị View
-                productView.setVisible(true);
+                // Chuyển sang màn hình User (Đổi từ ProductView -> UserView)
+                UserView userView = new UserView(user);
+                new UserController(userView); // Gắn Controller
+                userView.setVisible(true);
             }
             
             loginView.dispose();

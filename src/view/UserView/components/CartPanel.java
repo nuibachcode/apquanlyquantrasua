@@ -6,23 +6,23 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-// [QUAN TRỌNG] Phải extends JPanel, KHÔNG ĐƯỢC extends JDialog
+// [QUAN TRỌNG] Phải extends JPanel
 public class CartPanel extends JPanel {
     
     private JTextField txtTotal;
     private JButton btnOrder;
     private JButton btnViewCart;
 
-    // Màu sắc đồng bộ với HeaderPanel
+    // Màu sắc
     private final Color BG_COLOR = new Color(240, 248, 255); 
-    private final Color PRIMARY_ORANGE = new Color(255, 120, 0); // Cam đậm hơn chút cho sang
+    private final Color PRIMARY_ORANGE = new Color(255, 120, 0);
 
     public CartPanel() {
-        // Tăng khoảng cách giữa các phần tử (gap) lên 20px
+        // Tăng khoảng cách giữa các phần tử
         setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 15));
         setBackground(BG_COLOR);
         
-        // Viền trên mảnh màu xám để ngăn cách với danh sách sản phẩm
+        // Viền trên panel (giữ nguyên vì panel này hình chữ nhật)
         setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
 
         // --- 1. LABEL & TOTAL ---
@@ -30,18 +30,21 @@ public class CartPanel extends JPanel {
         lblTitle.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         lblTitle.setForeground(Color.DARK_GRAY);
 
-        txtTotal = new JTextField(12); // Độ rộng vừa phải
+        txtTotal = new JTextField(12);
         txtTotal.setEditable(false);
-        txtTotal.setFont(new Font("Segoe UI", Font.BOLD, 18)); // Số tiền to, rõ
-        txtTotal.setForeground(new Color(220, 53, 69)); // Màu đỏ chuẩn
+        txtTotal.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        txtTotal.setForeground(new Color(220, 53, 69));
         txtTotal.setBackground(Color.WHITE);
-        txtTotal.setHorizontalAlignment(JTextField.RIGHT); // Số tiền căn phải
+        txtTotal.setHorizontalAlignment(JTextField.RIGHT);
         
-        // Style cho ô tổng tiền: Viền mỏng + Padding bên trong
-        txtTotal.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            new EmptyBorder(5, 10, 5, 10)
-        ));
+        // --- SỬA ĐỔI CHO FLATLAF ---
+        // 1. Bo tròn ô tổng tiền
+        txtTotal.putClientProperty("TextComponent.arc", 20);
+        // 2. Đặt màu viền xám nhẹ (thay vì dùng LineBorder cứng)
+        txtTotal.putClientProperty("Component.borderColor", new Color(200, 200, 200));
+        // 3. Padding nội dung bên trong
+        txtTotal.setMargin(new Insets(5, 10, 5, 10));
+        
         txtTotal.setText("0₫");
 
         add(lblTitle);
@@ -56,34 +59,38 @@ public class CartPanel extends JPanel {
         
         // Style nút chính (Đặt hàng): Nền cam, chữ trắng
         styleButton(btnOrder, PRIMARY_ORANGE, Color.WHITE);
-        btnOrder.setFont(new Font("Segoe UI", Font.BOLD, 14)); // Font to hơn nút thường
-        btnOrder.setPreferredSize(new Dimension(220, 40)); // Nút đặt hàng dài hơn để dễ bấm
+        btnOrder.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnOrder.setPreferredSize(new Dimension(220, 40)); 
 
         add(btnViewCart);
         add(btnOrder);
     }
 
     /**
-     * Hàm style nút bấm dùng chung (Giống HeaderPanel)
+     * Hàm style nút bấm (Đã sửa đổi để hỗ trợ Bo Tròn)
      */
     private void styleButton(JButton btn, Color bgColor, Color fgColor) {
         btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btn.setBackground(bgColor);
         btn.setForeground(fgColor);
+        
         btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
+        // btn.setBorderPainted(false); // <-- XÓA DÒNG NÀY để FlatLaf vẽ viền cong
+        
         btn.setOpaque(true);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        // Padding cho nút thoáng hơn
-        btn.setBorder(new EmptyBorder(8, 15, 8, 15));
+        // Thay setBorder bằng setMargin để giữ độ bo tròn
+        btn.setMargin(new Insets(8, 15, 8, 15));
 
-        // Nếu là nút trắng (Xem giỏ hàng) thì thêm viền mỏng cho dễ nhìn
+        // Xử lý riêng cho nút Trắng (Xem giỏ hàng)
         if (bgColor.equals(Color.WHITE)) {
-            btn.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                new EmptyBorder(8, 15, 8, 15)
-            ));
+            // Thay vì tạo LineBorder thủ công, ta bảo FlatLaf đổi màu viền của nút này
+            btn.putClientProperty("Component.borderColor", new Color(200, 200, 200));
+            // Đảm bảo viền được vẽ
+            btn.setBorderPainted(true); 
+        } else {
+            // Nút màu (Cam): FlatLaf tự xử lý viền rất đẹp, không cần can thiệp
         }
 
         // Hiệu ứng Hover
@@ -92,7 +99,7 @@ public class CartPanel extends JPanel {
                 if (!bgColor.equals(Color.WHITE)) {
                     btn.setBackground(bgColor.darker());
                 } else {
-                    btn.setBackground(new Color(245, 245, 245)); // Xám nhẹ khi hover nút trắng
+                    btn.setBackground(new Color(245, 245, 245));
                 }
             }
             public void mouseExited(MouseEvent evt) {
