@@ -17,7 +17,7 @@ public class LoginView extends JFrame {
         setTitle("Đăng Nhập");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Kích thước giao diện 950x500 từ code thứ nhất
-        setBounds(100, 100, 950, 500); 
+        setBounds(100, 100, 950, 500);
         setLocationRelativeTo(null); // Đặt cửa sổ ra giữa màn hình
         setResizable(false);
 
@@ -29,7 +29,7 @@ public class LoginView extends JFrame {
         } catch (Exception e) {
             System.err.println("Warning: Background image '/images/signUpView.jpg' not found.");
         }
-        
+
         // Sử dụng lớp BackgroundPanel riêng biệt của bạn
         contentPane = new BackgroundPanel(bgImage);
         // Không cần gọi contentPane.setLayout(null) vì đã được set trong BackgroundPanel
@@ -45,13 +45,13 @@ public class LoginView extends JFrame {
         int startY = 130;
         int inputWidth = 250;
         int inputHeight = 30;
-        int labelX = 400; 
-        int fieldX = 500; 
-        
+        int labelX = 400;
+        int fieldX = 500;
+
         // ===== 2. Tiêu đề "Đăng Nhập" =====
         JLabel lblTitle = new JLabel("Đăng Nhập");
         lblTitle.setFont(titleFont);
-        lblTitle.setForeground(titleColor); 
+        lblTitle.setForeground(titleColor);
         lblTitle.setBounds(480, 50, 200, 40);
         contentPane.add(lblTitle);
 
@@ -84,17 +84,16 @@ public class LoginView extends JFrame {
         btnForgotPassword.setContentAreaFilled(false);
         btnForgotPassword.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnForgotPassword.setBounds(630, startY + 95, 120, 20);
-        btnForgotPassword.setActionCommand("Forget Password ?"); 
+        btnForgotPassword.setActionCommand("Forget Password ?");
         contentPane.add(btnForgotPassword);
-        
+
         // ===== 6. Nút Đăng Nhập và Đăng Kí =====
-        
         // Nút Đăng Nhập
         JButton btnLogin = new JButton("Đăng Nhập");
         btnLogin.setFont(labelFont);
         btnLogin.setBackground(btnColor);
         btnLogin.setBounds(400, startY + 150, 150, 40);
-        btnLogin.setActionCommand("Login"); 
+        btnLogin.setActionCommand("Login");
         contentPane.add(btnLogin);
 
         // Nút Đăng Kí
@@ -102,14 +101,14 @@ public class LoginView extends JFrame {
         btnRegister.setFont(labelFont);
         btnRegister.setBackground(btnColor);
         btnRegister.setBounds(600, startY + 150, 150, 40);
-        btnRegister.setActionCommand("SignUp"); 
+        btnRegister.setActionCommand("SignUp");
         contentPane.add(btnRegister);
 
         // ===== 7. Gán Controller (Logic từ code thứ hai) =====
         LoginController controller = new LoginController(this);
         btnLogin.addActionListener(controller);
         btnRegister.addActionListener(controller);
-        btnForgotPassword.addActionListener(controller); 
+        btnForgotPassword.addActionListener(controller);
     }
 
     // ===== Getters và Clear (Logic từ code thứ hai) =====
@@ -125,7 +124,7 @@ public class LoginView extends JFrame {
         textFieldEmail.setText("");
         passwordField.setText("");
     }
-    
+
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {

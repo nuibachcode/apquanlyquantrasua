@@ -18,6 +18,7 @@ import controller.bill.BillManagementController;
 import controller.user.UserManagementController;
 import controller.product.ProductManagementController;
 import controller.analytics.AnalyticsController;
+import view.LoginView;
 
 public class AdminView extends JFrame {
 
@@ -50,7 +51,11 @@ public class AdminView extends JFrame {
         btnLogout = new JButton("Đăng Xuất");
         btnLogout.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnLogout.setBackground(new Color(255, 102, 102));
-        btnLogout.addActionListener(e -> dispose()); // Giả định hành động đăng xuất
+        btnLogout.addActionListener(e ->{
+            dispose();
+             new LoginView().setVisible(true); 
+        });
+    
 
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.add(lblAdminPanel, BorderLayout.CENTER);

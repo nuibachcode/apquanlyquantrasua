@@ -114,8 +114,8 @@ public class ProductView extends JFrame {
 
         btnLogout.addActionListener(e -> {
             dispose();
-            // Đảm bảo LoginView tồn tại
-            // new LoginView().setVisible(true); 
+             
+             new LoginView().setVisible(true); 
         });
     }
 
@@ -269,6 +269,7 @@ private JPanel createProductItem(Product product, int index) {
         productsPanel.setBackground(Color.WHITE); 
         updateMenuPanel(allProducts);
         scrollPane = new JScrollPane(productsPanel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         scrollPane.setBounds(10, 80, 960, 450); 
         scrollPane.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.BLACK), 

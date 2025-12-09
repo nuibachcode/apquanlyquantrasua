@@ -67,7 +67,7 @@ public class UserRepositoryImpl implements IUserRepository {
     private void initializeUsers() {
     	 // Tạo tài khoản quản trị viên
         users.add(new User(1, "Nguyễn Thị Tuyết Nhung", "nhung@gmail.com", "0987654321", "Address1", "nhungxinhgai", "ADMIN"));
-        users.add(new User(2, "Bạch Sỹ Núi", "n@gmail.com", "0819617768", "Address1", "123", "USER"));
+        users.add(new User(2, "Bạch Sỹ Núi", "n@gmail.com", "0819617768", "Address1", "123", "ADMIN"));
 
         // Tạo tài khoản người dùng với vai trò "USER"
         users.add(new User(4, "Nguyễn Văn A", "nguyenvana@gmail.com", "987654321", "Address4", "123", "USER"));
