@@ -14,11 +14,13 @@ public class OrderHistoryDialog extends JDialog {
     private BillRepositoryImpl billRepo;
     private List<Bill> myBills; // Danh sách đang hiển thị
 
+    // Định nghĩa các phương thức thanh toán
+    private final String[] PAYMENT_OPTIONS = {"Tiền mặt (COD)", "Chuyển khoản QR", "Thẻ Tín Dụng/Visa"};
+
     public OrderHistoryDialog(JFrame parent, List<Bill> bills) {
         super(parent, "Lịch Sử Đặt Hàng", true);
         this.myBills = bills;
-        this.billRepo = new BillRepositoryImpl(); // Để gọi hàm update
-        
+        this.billRepo = new BillRepositoryImpl();
         setSize(850, 500);
         setLocationRelativeTo(parent);
         
@@ -28,14 +30,13 @@ public class OrderHistoryDialog extends JDialog {
         lblTitle.setForeground(new Color(0, 102, 0));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(15,0,15,0));
         add(lblTitle, BorderLayout.NORTH);
-
+        
         // --- Table ---
         String[] columnNames = {"Mã Đơn", "Ngày Đặt", "Tổng Tiền", "Trạng Thái", "Địa Chỉ Giao"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
-        
         table = new JTable(tableModel);
         table.setRowHeight(30);
         table.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -43,9 +44,8 @@ public class OrderHistoryDialog extends JDialog {
         
         // Load data lần đầu
         refreshTableData();
-
         add(new JScrollPane(table), BorderLayout.CENTER);
-
+        
         // --- Buttons Panel ---
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         
@@ -57,11 +57,11 @@ public class OrderHistoryDialog extends JDialog {
         
         JButton btnClose = new JButton("Đóng");
         btnClose.setFont(new Font("Arial", Font.BOLD, 14));
-
+        
         // Logic sự kiện Thanh Toán
         btnPay.addActionListener(e -> handlePayment());
         btnClose.addActionListener(e -> dispose());
-
+        
         btnPanel.add(btnPay);
         btnPanel.add(btnClose);
         add(btnPanel, BorderLayout.SOUTH);
@@ -71,9 +71,8 @@ public class OrderHistoryDialog extends JDialog {
         tableModel.setRowCount(0);
         if (myBills != null) {
             for (Bill b : myBills) {
-                // Kiểm tra boolean isCompleted để hiển thị text
                 String statusText;
-                if (b.getIsCompleted()) { // Giả sử model Bill có hàm này
+                if (b.getIsCompleted()) {
                     statusText = "Đã thanh toán ";
                 } else {
                     statusText = "Chờ thanh toán (COD)";
@@ -105,19 +104,49 @@ public class OrderHistoryDialog extends JDialog {
             return;
         }
 
-        int billId = (int) table.getValueAt(selectedRow, 0);
+        // Lấy thông tin đơn hàng
+        // Chú ý: Cần đảm bảo cột 0 (Mã Đơn) có kiểu dữ liệu khớp với b.getMaHD()
+        Object billIdObj = table.getValueAt(selectedRow, 0); 
+        
+        // Xử lý ID là Long/BigInt nếu cần (theo Saved Information của bạn)
+        // Nếu MaHD là Long (BIGINT), thì cần ép kiểu an toàn hơn. 
+        // Hiện tại bạn đang dùng (int), tôi giữ lại để phù hợp với mã cũ.
+        int billId;
+        if (billIdObj instanceof Integer) {
+             billId = (int) billIdObj;
+        } else {
+             // Giả định nó là String hoặc Long và có thể chuyển đổi được
+             billId = Integer.parseInt(billIdObj.toString()); 
+        }
+
         String amount = table.getValueAt(selectedRow, 2).toString();
 
-        // Mở hộp thoại xác nhận thanh toán (Dùng lại PaymentDialog của bạn hoặc confirm đơn giản)
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            "Xác nhận thanh toán số tiền " + amount + " cho đơn hàng #" + billId + "?",
-            "Thanh Toán", JOptionPane.YES_NO_OPTION);
+        // -----------------------------------------------------
+        // THAY THẾ JOptionPane đơn giản bằng logic chọn phương thức
+        // -----------------------------------------------------
 
-        if (confirm == JOptionPane.YES_OPTION) {
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Tổng tiền: " + amount));
+        panel.add(new JLabel("Chọn phương thức thanh toán:"));
+        
+        JComboBox<String> cbPaymentMethod = new JComboBox<>(PAYMENT_OPTIONS);
+        panel.add(cbPaymentMethod);
+        
+        int result = JOptionPane.showConfirmDialog(
+            this, 
+            panel, 
+            "Xác Nhận Thanh Toán Đơn #" + billId, 
+            JOptionPane.OK_CANCEL_OPTION, 
+            JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION) {
+            String selectedMethod = (String) cbPaymentMethod.getSelectedItem();
+            
             // 1. Cập nhật trong file/database
             billRepo.updatePaymentStatus(billId);
             
-            // 2. Cập nhật trạng thái trong List bộ nhớ hiện tại để bảng hiển thị đúng ngay lập tức
+            // 2. Cập nhật trạng thái trong List bộ nhớ hiện tại
             for(Bill b : myBills) {
                 if(b.getMaHD() == billId) {
                     b.setIsCompleted(true);
@@ -127,7 +156,13 @@ public class OrderHistoryDialog extends JDialog {
 
             // 3. Refresh bảng
             refreshTableData();
-            JOptionPane.showMessageDialog(this, "Thanh toán thành công! ");
+            
+            JOptionPane.showMessageDialog(this, 
+                "Thanh toán thành công qua phương thức: " + selectedMethod + "!", 
+                "Hoàn tất", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            // Hủy bỏ thanh toán
+            JOptionPane.showMessageDialog(this, "Đã hủy bỏ thanh toán cho đơn hàng #" + billId + ".");
         }
     }
 }

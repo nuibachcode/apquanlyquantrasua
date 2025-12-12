@@ -1,19 +1,21 @@
 package view.UserView.components;
 
 import model.User;
-// Nếu bạn có UserRepository thì import vào để lưu
 import repository.UserRepositoryImpl; 
 import javax.swing.*;
 import java.awt.*;
+import utils.SecurityUtils;
 
 public class ChangePasswordDialog extends JDialog {
 
     private JPasswordField txtOldPass, txtNewPass, txtConfirmPass;
     private User user;
+    private UserRepositoryImpl userRepo;
 
     public ChangePasswordDialog(Dialog parent, User user) {
         super(parent, "Đổi Mật Khẩu", true);
         this.user = user;
+        this.userRepo = new UserRepositoryImpl(); // Khởi tạo Repo
         setSize(400, 300);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
@@ -56,17 +58,21 @@ public class ChangePasswordDialog extends JDialog {
         String oldPass = new String(txtOldPass.getPassword());
         String newPass = new String(txtNewPass.getPassword());
         String confirmPass = new String(txtConfirmPass.getPassword());
-
+        
         // 1. Kiểm tra rỗng
-        if (oldPass.isEmpty() || newPass.isEmpty()) {
+        if (oldPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
 
+        // --- LƯU Ý SỬA LỖI QUAN TRỌNG NHẤT ---
+        // Giả định: Đăng nhập thành công nghĩa là user.getMatKhau() là mật khẩu đã lưu/hash.
+        // Nếu Đăng nhập đang dùng HASHING, bạn cần dùng hàm kiểm tra HASHING ở đây.
+        // VÌ CODE CỦA BẠN CHỈ SO SÁNH CHUỖI, TÔI GIẢ ĐỊNH BẠN ĐANG LƯU PLAIN TEXT
+        String hashedPassword = SecurityUtils.hashPassword(oldPass);
         // 2. Kiểm tra mật khẩu cũ có đúng không
-        // (Lưu ý: user.getMatKhau() hoặc user.getPassword() tùy model của bạn)
-        if (!user.getMatKhau().equals(oldPass)) { 
-            JOptionPane.showMessageDialog(this, "Mật khẩu cũ không chính xác!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if (!user.getMatKhau().equals(hashedPassword)) { 
+            JOptionPane.showMessageDialog(this, "Mật khẩu cũ không chính xác! (Lưu ý: Mật khẩu có thể đã được mã hóa)", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -78,17 +84,21 @@ public class ChangePasswordDialog extends JDialog {
         
         // 4. Kiểm tra độ dài (tùy chọn)
         if (newPass.length() < 6) {
-             JOptionPane.showMessageDialog(this, "Mật khẩu mới phải từ 6 ký tự trở lên!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-             return;
+            JOptionPane.showMessageDialog(this, "Mật khẩu mới phải từ 6 ký tự trở lên!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-
+        String hashedPasswordNew = SecurityUtils.hashPassword(newPass);
         // 5. Cập nhật và Lưu
-        user.setMatKhau(newPass);
+        user.setMatKhau(hashedPasswordNew); // Cập nhật mật khẩu Plain Text mới
         
-        // QUAN TRỌNG: Gọi Repository để lưu vào file/DB
-        new UserRepositoryImpl().update(user); 
-
-        JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công!");
-        dispose();
+        try {
+            // QUAN TRỌNG: Gọi Repository để lưu vào file/DB
+            userRepo.update(user); 
+            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công!");
+            dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi lưu mật khẩu mới: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

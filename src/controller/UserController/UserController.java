@@ -10,7 +10,8 @@ import repository.ProductRepositoryImpl;
 import view.UserView.UserView; 
 import view.UserView.components.OrderHistoryDialog;
 import view.UserView.components.ProfileDialog;
-import view.UserView.components.CartDetailsDialog; // [QUAN TRỌNG] Import cái này
+import view.UserView.components.CartDetailsDialog; 
+import view.UserView.components.CartUpdateListener; // [THÊM] Import interface
 import view.LoginView;
 
 import javax.swing.*;
@@ -18,7 +19,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserController {
+// THÊM: Implement interface để lắng nghe sự kiện thay đổi giỏ hàng từ dialog
+public class UserController implements CartUpdateListener { 
 
     private UserView view;
     private ProductRepositoryImpl productRepo;
@@ -79,12 +81,15 @@ public class UserController {
 
     // --- HÀM HIỂN THỊ GIỎ HÀNG ĐẸP ---
     private void showCartDetails() {
-         if (cart.isEmpty()) {
-             JOptionPane.showMessageDialog(view, "Giỏ hàng đang trống!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-             return;
-         }
-         // [SỬA LỖI] Gọi CartDetailsDialog (Popup), KHÔNG PHẢI CartPanel
-         new CartDetailsDialog(view, cart).setVisible(true);
+        if (cart.isEmpty()) {
+            JOptionPane.showMessageDialog(view, "Giỏ hàng đang trống!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        // [SỬA LỖI] Truyền this (Controller) vào làm CartUpdateListener
+        new CartDetailsDialog(view, cart, this).setVisible(true); 
+        
+        // Sau khi dialog đóng, ta vẫn gọi cập nhật lại một lần cuối
+        updateTotalUI(); 
     }
 
     private void processOrderWithoutPayment() {
@@ -100,9 +105,11 @@ public class UserController {
 
         User user = view.getLoggedInUser();
         try {
-            Bill bill = new Bill(0, user.getTen(), user.getSdt(), user.getEmail(), user.getDiaChi(), java.time.LocalDate.now().toString(), total, new ArrayList<>(cart));
+            // [SỬA LỖI] Đảm bảo Bill.id được tạo ra từ DB (0 hoặc null tùy cấu trúc của Bill)
+            // (Giả định BillRepo sẽ tự động tạo ID)
+            Bill bill = new Bill(0, user.getTen(), user.getSdt(), user.getEmail(), user.getDiaChi(), java.time.LocalDate.now().toString(), total, new ArrayList<>(cart)); 
             billRepo.save(bill);
-            JOptionPane.showMessageDialog(view, "✅ ĐẶT HÀNG THÀNH CÔNG!\nVui lòng vào Lịch sử đơn hàng để thanh toán.");
+            JOptionPane.showMessageDialog(view, "✅ ĐẶT HÀNG THÀNH CÔNG!\nĐơn hàng sẽ được xử lý sớm.");
             cart.clear();
             updateTotalUI();
         } catch (Exception e) {
@@ -117,7 +124,8 @@ public class UserController {
         List<Bill> myBills = new ArrayList<>();
         if (allBills != null) {
             for (Bill b : allBills) {
-                if (b.getEmail().equals(currentUser.getEmail())) {
+                // Giả định email là duy nhất cho mỗi user
+                if (b.getEmail().equals(currentUser.getEmail())) { 
                     myBills.add(b);
                 }
             }
@@ -141,9 +149,12 @@ public class UserController {
             if (!exists) cart.add(new SelectedProduct(p, qty));
             updateTotalUI();
             JOptionPane.showMessageDialog(view, "Đã thêm vào giỏ!");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+             JOptionPane.showMessageDialog(view, "Số lượng không hợp lệ.");
+        }
     }
 
+    // HÀM CẬP NHẬT TỔNG Ở GIAO DIỆN CHÍNH
     private void updateTotalUI() {
         double total = 0;
         for (SelectedProduct sp : cart) total += sp.getQuantity() * sp.getProduct().getGia();
@@ -166,5 +177,11 @@ public class UserController {
                 if (p != null) addToCart(p);
             }
         });
+    }
+
+    // [TRIỂN KHAI INTERFACE] - Được gọi từ CartDetailsDialog khi có thay đổi
+    @Override
+    public void onCartUpdated() {
+        updateTotalUI();
     }
 }

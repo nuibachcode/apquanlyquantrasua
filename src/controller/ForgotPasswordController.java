@@ -36,7 +36,6 @@ public class ForgotPasswordController implements ActionListener {
             JOptionPane.showMessageDialog(view, "Vui lòng nhập Email!");
             return;
         }
-
         // Kiểm tra Email có tồn tại trong hệ thống không
         if (userRepo.checkEmailExists(email)) {
             // Tạo mã OTP ngẫu nhiên 6 số
@@ -44,7 +43,6 @@ public class ForgotPasswordController implements ActionListener {
             int otpNum = 100000 + rand.nextInt(900000);
             generatedOTP = String.valueOf(otpNum);
             verifiedEmail = email; // Lưu lại email để tí nữa đổi pass
-
             // GIẢ LẬP GỬI EMAIL: Hiển thị OTP lên Dialog thay vì gửi mail thật
             JOptionPane.showMessageDialog(view, 
                 "Hệ thống đã gửi mã xác nhận đến email: " + email + "\n" +
@@ -56,46 +54,37 @@ public class ForgotPasswordController implements ActionListener {
             view.getPnlReset().setVisible(true);
             view.getTxtEmail().setEditable(false); // Khóa ô email lại
             view.getBtnSendCode().setEnabled(false); // Khóa nút gửi lại
-
         } else {
             JOptionPane.showMessageDialog(view, "Email này chưa được đăng ký trong hệ thống!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     // 2. Xử lý nút "Xác nhận đổi mật khẩu"
     private void handleResetPassword() {
         String inputOTP = view.getTxtOTP().getText().trim();
         String newPass = new String(view.getTxtNewPass().getPassword());
         String confirmPass = new String(view.getTxtConfirmPass().getPassword());
-
         // Validate
         if (inputOTP.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
             JOptionPane.showMessageDialog(view, "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
-
         // Kiểm tra OTP
         if (!inputOTP.equals(generatedOTP)) {
             JOptionPane.showMessageDialog(view, "Mã OTP không chính xác!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         // Kiểm tra mật khẩu khớp nhau
         if (!newPass.equals(confirmPass)) {
             JOptionPane.showMessageDialog(view, "Mật khẩu xác nhận không khớp!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
         if (newPass.length() < 6) {
              JOptionPane.showMessageDialog(view, "Mật khẩu phải từ 6 ký tự trở lên!", "Lỗi", JOptionPane.WARNING_MESSAGE);
              return;
         }
-
         // THÀNH CÔNG -> Gọi Repo lưu mật khẩu mới
         userRepo.updatePassword(verifiedEmail, newPass);
-
         JOptionPane.showMessageDialog(view, "Đổi mật khẩu thành công!\nVui lòng đăng nhập lại.", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-        
         // Quay về màn hình đăng nhập
         new LoginView().setVisible(true);
         view.dispose();

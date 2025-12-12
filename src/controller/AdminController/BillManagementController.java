@@ -62,16 +62,39 @@ public class BillManagementController implements ActionListener {
         // Hàm này có thể trống nếu bạn xử lý sự kiện trực tiếp trên TableModel
     }
 
-    // --- [NÂNG CẤP] HIỂN THỊ CHI TIẾT & IN HÓA ĐƠN ---
+    public void deleteBill(int billId) {
+        // Hỏi lại người dùng trước khi xóa
+        int confirm = JOptionPane.showConfirmDialog(
+            adminView, 
+            "Bạn có chắc chắn muốn xóa Hóa đơn #" + billId + " không? Hành động này không thể hoàn tác.", 
+            "Xác nhận Xóa", 
+            JOptionPane.YES_NO_OPTION, 
+            JOptionPane.WARNING_MESSAGE
+        );
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                billRepository.delete(billId);
+                JOptionPane.showMessageDialog(adminView, "Đã xóa thành công Hóa đơn #" + billId, "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(adminView, "Lỗi khi xóa hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+            loadBills(); // Tải lại danh sách để cập nhật giao diện
+        }
+    }
+
+
+    // --- [CẬP NHẬT] HIỂN THỊ CHI TIẾT & IN HÓA ĐƠN ---
     public void showBillDetails(int billId) {
         Bill bill = billRepository.findById(billId);
 
         if (bill != null) {
-            StringBuilder detail = new StringBuilder();
+            // ... (Phần tạo nội dung detail giữ nguyên)
             
-            // --- 1. Tạo nội dung hiển thị trên màn hình ---
+            StringBuilder detail = new StringBuilder();
+            // ... (Nội dung chi tiết hóa đơn giữ nguyên)
             detail.append("--- THÔNG TIN KHÁCH HÀNG ---\n");
-            detail.append(String.format("Tên Khách Hàng: %s\n", bill.getTen())); // Lưu ý: Kiểm tra lại Model xem là getTen() hay getTenKH()
+            detail.append(String.format("Tên Khách Hàng: %s\n", bill.getTen())); 
             detail.append(String.format("SĐT: %s\n", bill.getSdt()));
             detail.append(String.format("Email: %s\n", bill.getEmail()));
             detail.append(String.format("Địa Chỉ: %s\n", bill.getDiaChi()));
@@ -83,7 +106,7 @@ public class BillManagementController implements ActionListener {
             detail.append("\nSản phẩm:\n");
             
             for (SelectedProduct sp : bill.getSelectedProducts()) {
-                double subTotal = sp.getTotalPrice(); // Đảm bảo class SelectedProduct có hàm này, hoặc dùng: sp.getProduct().getGia() * sp.getQuantity()
+                double subTotal = sp.getTotalPrice(); 
                 detail.append(String.format("  - %s (x%d) @ %,.0f₫ = %,.0f₫\n", 
                     sp.getProduct().getTenSP(), 
                     sp.getQuantity(), 
@@ -99,23 +122,25 @@ public class BillManagementController implements ActionListener {
             textArea.setRows(15);
             textArea.setColumns(40);
             
-            // --- 2. [MỚI] Hiển thị Dialog có nút IN PDF ---
-            Object[] options = {"In Hóa Đơn (PDF)", "Đóng"};
+            // --- CẬP NHẬT: Thêm nút XÓA ---
+            Object[] options = {"In Hóa Đơn (PDF)", "Xóa Đơn Hàng", "Đóng"};
             
             int choice = JOptionPane.showOptionDialog(
                 adminView, 
                 new JScrollPane(textArea), 
                 "Chi Tiết Hóa Đơn #" + billId, 
-                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.YES_NO_CANCEL_OPTION, // Thay đổi thành 3 tùy chọn
                 JOptionPane.INFORMATION_MESSAGE, 
                 null, 
                 options, 
-                options[1] // Mặc định chọn nút Đóng
+                options[2] // Mặc định chọn nút Đóng
             );
 
-            // Nếu người dùng chọn "In Hóa Đơn" (Index 0)
-            if (choice == 0) {
+            // Xử lý lựa chọn
+            if (choice == 0) { // Index 0: In Hóa Đơn
                 exportBillToPDF(bill);
+            } else if (choice == 1) { // Index 1: Xóa Đơn Hàng
+                deleteBill(billId); // Gọi hàm xóa mới
             }
 
         } else {

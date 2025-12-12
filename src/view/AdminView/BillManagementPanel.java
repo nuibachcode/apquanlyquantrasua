@@ -20,15 +20,10 @@ public class BillManagementPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // 1. Control Panel (NORTH) - Chỉ giữ tiêu đề
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         controlPanel.setBorder(BorderFactory.createTitledBorder("Thao tác Hóa đơn"));
-        // Đã loại bỏ nút btnBillViewAll
-        // controlPanel.add(btnBillViewAll);
         add(controlPanel, BorderLayout.NORTH);
-
         // 2. Table Panel (CENTER)
-        // Đã thay đổi thứ tự và loại bỏ Tổng Tiền khỏi bảng hiển thị ban đầu
         billTableModel = new DefaultTableModel(new Object[] { "Mã HĐ", "Tên Khách Hàng", "Ngày", "Hoàn thành" }, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -43,8 +38,6 @@ public class BillManagementPanel extends JPanel {
         };
         billTable = new JTable(billTableModel);
         billTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        
-        // <<< THÊM LISTENER ĐỂ XEM CHI TIẾT >>>
         billTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent e) {
@@ -57,11 +50,7 @@ public class BillManagementPanel extends JPanel {
                             // Gọi Controller để hiển thị chi tiết
                             // Lưu ý: Cần truyền Controller vào phương thức này
                             if (billTable.getParent().getParent().getParent() instanceof BillManagementPanel) {
-                                // Gọi Controller thông qua biến được truyền vào addController
-                                // BillManagementController sẽ được lấy từ bối cảnh Controller chính
-                                // Do đó, ta cần lưu trữ BillManagementController trong Panel hoặc truy cập thông qua một cách an toàn hơn.
-                                
-                                // Tạm thời để trống logic gọi hàm ở đây và chuyển sang addController
+ 
                             }
                         } catch (Exception ex) {
                             // Không cần thiết phải hiển thị lỗi khi chọn, nhưng giữ lại để debug

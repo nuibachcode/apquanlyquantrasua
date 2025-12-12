@@ -49,30 +49,20 @@ public class ProductListPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         panel.setBackground(Color.WHITE);
-        panel.setPreferredSize(new Dimension(180, 220)); // Tăng chiều cao xíu cho đẹp
-
+        panel.setPreferredSize(new Dimension(180, 220)); 
         // --- 1. XỬ LÝ ẢNH ---
         JLabel lblImage = new JLabel();
-        lblImage.setPreferredSize(new Dimension(200, 150)); // Kích thước khung ảnh
+        lblImage.setPreferredSize(new Dimension(200, 150));
         lblImage.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        // Lấy tên ảnh từ Product (Giả sử getter là getImageName hoặc dùng getHinhAnh tùy model của bạn)
-        // Nếu model không có field ảnh, bạn có thể tạm dùng p.getTenSP() để test hoặc để chuỗi rỗng
         String imageName = p.getImageName(); 
-        
-        // Đường dẫn: /images/ten_anh.png (Lưu ý: phải có dấu / ở đầu)
         String imagePath = "/images/" + (imageName != null && !imageName.isEmpty() ? imageName : "default.png");
-
         try {
             URL url = getClass().getResource(imagePath);
-            
             if (url != null) {
-                // Tải ảnh và Resize cho vừa khung 180x130
                 ImageIcon icon = new ImageIcon(url);
                 Image img = icon.getImage().getScaledInstance(200, 160, Image.SCALE_SMOOTH); 
                 lblImage.setIcon(new ImageIcon(img));
             } else {
-                // Nếu không tìm thấy file ảnh
                 lblImage.setText("No Image");
                 lblImage.setForeground(Color.GRAY);
                 lblImage.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY)); // Viền báo thiếu ảnh
@@ -80,7 +70,6 @@ public class ProductListPanel extends JPanel {
         } catch (Exception e) {
             lblImage.setText("Error");
         }
-
         // --- 2. XỬ LÝ TÊN VÀ GIÁ ---
         JLabel lblName = new JLabel("<html><center>" 
                 + p.getTenSP() + "<br>" 
@@ -88,11 +77,8 @@ public class ProductListPanel extends JPanel {
                 + "</center></html>", SwingConstants.CENTER);
         lblName.setVerticalAlignment(SwingConstants.TOP);
         lblName.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5)); // Padding
-
         panel.add(lblImage, BorderLayout.CENTER);
         panel.add(lblName, BorderLayout.SOUTH);
-        
-        // Hiệu ứng hover chuột (Con trỏ tay)
         panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return panel;
     }

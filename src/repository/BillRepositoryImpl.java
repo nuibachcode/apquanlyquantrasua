@@ -91,7 +91,20 @@ public class BillRepositoryImpl implements IBillRepository {
         }
         return null;
     }
+    @Override
+    public void delete(int id) {
+        // Tìm và xóa hóa đơn dựa trên MaHD
+        boolean removed = bills.removeIf(bill -> bill.getMaHD() == id);
 
+        if (removed) {
+            // Chỉ lưu lại vào file nếu có hóa đơn được xóa
+            saveBillsToFile();
+            System.out.println("DEBUG: Đã xóa Hóa đơn có ID: " + id + " và lưu lại vào file.");
+        } else {
+            System.out.println("DEBUG: Không tìm thấy Hóa đơn có ID: " + id + " để xóa.");
+            // Tùy chọn: Bạn có thể ném một ngoại lệ ở đây nếu muốn thông báo lỗi cụ thể
+        }
+    }
     private int generateNewId() {
         return bills.stream().mapToInt(Bill::getMaHD).max().orElse(0) + 1;
     }

@@ -10,4 +10,5 @@ public interface IBillRepository {
     public void clear();
     public Bill findById(int id);
     public Bill update(Bill bill);
+    public void delete(int id);
 }

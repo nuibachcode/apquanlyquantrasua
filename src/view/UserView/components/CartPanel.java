@@ -18,13 +18,9 @@ public class CartPanel extends JPanel {
     private final Color PRIMARY_ORANGE = new Color(255, 120, 0);
 
     public CartPanel() {
-        // Tăng khoảng cách giữa các phần tử
         setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 15));
         setBackground(BG_COLOR);
-        
-        // Viền trên panel (giữ nguyên vì panel này hình chữ nhật)
         setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
-
         // --- 1. LABEL & TOTAL ---
         JLabel lblTitle = new JLabel("Tạm tính:");
         lblTitle.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -36,32 +32,20 @@ public class CartPanel extends JPanel {
         txtTotal.setForeground(new Color(220, 53, 69));
         txtTotal.setBackground(Color.WHITE);
         txtTotal.setHorizontalAlignment(JTextField.RIGHT);
-        
-        // --- SỬA ĐỔI CHO FLATLAF ---
-        // 1. Bo tròn ô tổng tiền
-        txtTotal.putClientProperty("TextComponent.arc", 20);
-        // 2. Đặt màu viền xám nhẹ (thay vì dùng LineBorder cứng)
-        txtTotal.putClientProperty("Component.borderColor", new Color(200, 200, 200));
-        // 3. Padding nội dung bên trong
-        txtTotal.setMargin(new Insets(5, 10, 5, 10));
-        
-        txtTotal.setText("0₫");
 
+        txtTotal.putClientProperty("TextComponent.arc", 20);
+        txtTotal.putClientProperty("Component.borderColor", new Color(200, 200, 200));
+        txtTotal.setMargin(new Insets(5, 10, 5, 10));
+        txtTotal.setText("0₫");
         add(lblTitle);
         add(txtTotal);
-
         // --- 2. BUTTONS ---
         btnViewCart = new JButton("Xem giỏ hàng");
         btnOrder = new JButton("TIẾN HÀNH ĐẶT HÀNG");
-
-        // Style nút phụ (Xem giỏ hàng): Nền trắng, chữ đen
         styleButton(btnViewCart, Color.WHITE, Color.BLACK);
-        
-        // Style nút chính (Đặt hàng): Nền cam, chữ trắng
         styleButton(btnOrder, PRIMARY_ORANGE, Color.WHITE);
         btnOrder.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnOrder.setPreferredSize(new Dimension(220, 40)); 
-
         add(btnViewCart);
         add(btnOrder);
     }
